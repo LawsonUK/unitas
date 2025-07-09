@@ -37,15 +37,33 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => updateAppearance('light')}>
+                <DropdownMenuItem 
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateAppearance('light');
+                    }}
+                >
                     <Sun className="mr-2" />
                     Light
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => updateAppearance('dark')}>
+                <DropdownMenuItem 
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateAppearance('dark');
+                    }}
+                >
                     <Moon className="mr-2" />
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => updateAppearance('system')}>
+                <DropdownMenuItem 
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateAppearance('system');
+                    }}
+                >
                     <Monitor className="mr-2" />
                     System
                 </DropdownMenuItem>

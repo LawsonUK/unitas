@@ -58,14 +58,15 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-6 rounded-xl p-4 overflow-x-auto">
+            <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 {/* Header */}
                 <div>
                     <h1 className="text-2xl font-semibold tracking-tight">Farm Dashboard</h1>
-                    <p className="text-muted-foreground">
-                        Monitor your poultry farm's key metrics and performance
-                    </p>
+                    <p className="text-muted-foreground">Monitor your poultry farm's key metrics and performance</p>
                 </div>
+
+                {/* Quick Actions */}
+                <QuickActions />
 
                 {/* Main Statistics Cards */}
                 <StatsCards stats={mockStats} />
@@ -75,9 +76,6 @@ export default function Dashboard() {
 
                 {/* Chart Section */}
                 <ChartSection weeklyData={mockWeeklyData} alerts={mockAlerts} />
-
-                {/* Quick Actions */}
-                <QuickActions />
             </div>
         </AppLayout>
     );

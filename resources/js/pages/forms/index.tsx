@@ -4,9 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Plus, Edit, Trash2, Calendar, Clock } from 'lucide-react';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Plus, Edit, Trash2, Calendar, Clock, CheckCircle2Icon, AlertCircleIcon } from 'lucide-react';
 import { Link } from '@inertiajs/react';
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,10 +53,54 @@ const formatDate = (dateString: string) => {
 
 export default function Forms() {
     const { forms } = usePage<PageProps>().props;
-    
+    const [deleteId, setDeleteId] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+    // Auto-dismiss alert after 3 seconds
+    useEffect(() => {
+        if (alert) {
+            const timeout = setTimeout(() => setAlert(null), 3000);
+            return () => clearTimeout(timeout);
+        }
+    }, [alert]);
+
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        setIsDeleting(true);
+        router.delete(`/forms/${deleteId}`, {
+            onSuccess: () => {
+                setAlert({ type: 'success', message: 'Form deleted successfully' });
+                setDeleteId(null);
+            },
+            onError: () => {
+                setAlert({ type: 'error', message: 'Failed to delete form' });
+            },
+            onFinish: () => {
+                setIsDeleting(false);
+            },
+        });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Forms" />
+            {alert && (
+                <div className="fixed top-6 right-6 z-50 min-w-[260px] max-w-xs">
+                    <Alert
+                        variant={alert.type === 'error' ? 'destructive' : 'default'}
+                        className="shadow-lg bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-600"
+                    >
+                        {alert.type === 'error' ? (
+                            <AlertCircleIcon className="h-5 w-5 text-destructive" />
+                        ) : (
+                            <CheckCircle2Icon className="h-5 w-5 text-green-600" />
+                        )}
+                        <AlertTitle>{alert.type === 'error' ? 'Error' : 'Success'}</AlertTitle>
+                        <AlertDescription className="dark:text-white">{alert.message}</AlertDescription>
+                    </Alert>
+                </div>
+            )}
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto rounded-xl p-4">
                 {/* Header with Create Button */}
                 <div className="flex items-center justify-between">
@@ -133,6 +180,7 @@ export default function Forms() {
                                                         size="sm"
                                                         className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                                                         title="Delete form"
+                                                        onClick={() => setDeleteId(form.id)}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
@@ -146,6 +194,23 @@ export default function Forms() {
                     </CardContent>
                 </Card>
             </div>
+            {/* Delete Confirmation Modal */}
+            <Dialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                <DialogContent aria-describedby="delete-description">
+                    <DialogHeader>
+                        <DialogTitle>Delete Form</DialogTitle>
+                    </DialogHeader>
+                    <p id="delete-description">Are you sure you want to delete this form? This action cannot be undone.</p>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setDeleteId(null)} disabled={isDeleting}>
+                            Cancel
+                        </Button>
+                        <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+                            {isDeleting ? 'Deleting...' : 'Delete'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

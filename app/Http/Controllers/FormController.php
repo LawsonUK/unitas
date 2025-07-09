@@ -41,6 +41,11 @@ class FormController extends Controller
 
     public function destroy(Form $form)
     {
-        $form->delete();
+        try {
+            $form->delete();
+            return redirect()->route('forms')->with('success', 'Form deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('forms')->with('error', 'Failed to delete form.');
+        }
     }
 }   

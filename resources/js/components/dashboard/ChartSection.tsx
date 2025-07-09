@@ -85,7 +85,37 @@ export default function ChartSection({ weeklyData, alerts }: ChartSectionProps) 
                                 tickLine={false}
                                 tick={{ fontSize: 12 }}
                             />
-                            <ChartTooltip />
+                            <ChartTooltip
+                                content={({ active, payload, label }) => {
+                                    if (!active || !payload?.length) return null;
+                                    
+                                    return (
+                                        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 min-w-[200px]">
+                                            <div className="font-medium text-sm text-gray-900 dark:text-gray-100 mb-2">
+                                                {label}
+                                            </div>
+                                            <div className="space-y-1">
+                                                {payload.map((entry: any, index: number) => (
+                                                    <div key={index} className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-2">
+                                                            <div 
+                                                                className="w-3 h-3 rounded-full" 
+                                                                style={{ backgroundColor: entry.color }}
+                                                            />
+                                                            <span className="text-sm text-gray-600 dark:text-gray-300">
+                                                                {entry.dataKey === 'eggs' ? 'Egg Production' : 'Ill Birds'}
+                                                            </span>
+                                                        </div>
+                                                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                                            {entry.value?.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                }}
+                            />
                             <ChartLegend
                                 content={({ payload }) => (
                                     <ChartLegendContent payload={payload} />

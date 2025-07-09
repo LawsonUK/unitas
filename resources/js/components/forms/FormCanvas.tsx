@@ -287,7 +287,7 @@ export default function FormCanvas({ elements, onElementUpdate, onElementDelete,
             <CardContent className="p-6 h-full">
                 <div
                     ref={canvasRef}
-                    className="relative mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
+                    className="relative mx-auto bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 shadow-sm"
                     style={{
                         width: '210mm',
                         height: '297mm',

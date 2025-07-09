@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->enum('frequency', ['Daily', 'Weekly', 'Monthly']);
+            $table->string('frequency');
             $table->json('structure')->comment('JSON structure defining the form fields and layout');
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Plus, Edit, Trash2, Calendar, Clock } from 'lucide-react';
+import { Link } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -14,57 +15,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Mock data for poultry farm forms
-const mockForms = [
-    {
-        id: 1,
-        name: 'Daily Health Check',
-        description: 'Daily inspection of bird health, feed consumption, and water quality',
-        frequency: 'Daily',
-        createdOn: '2024-01-15',
-        updatedOn: '2024-01-20',
-    },
-    {
-        id: 2,
-        name: 'Weekly Maintenance Checklist',
-        description: 'Weekly equipment maintenance, cleaning schedules, and facility checks',
-        frequency: 'Weekly',
-        createdOn: '2024-01-10',
-        updatedOn: '2024-01-18',
-    },
-    {
-        id: 3,
-        name: 'Monthly Production Report',
-        description: 'Monthly egg production, mortality rates, and feed efficiency tracking',
-        frequency: 'Monthly',
-        createdOn: '2024-01-05',
-        updatedOn: '2024-01-25',
-    },
-    {
-        id: 4,
-        name: 'Biosecurity Protocol',
-        description: 'Daily biosecurity measures, visitor logs, and disinfection procedures',
-        frequency: 'Daily',
-        createdOn: '2024-01-12',
-        updatedOn: '2024-01-19',
-    },
-    {
-        id: 5,
-        name: 'Feed Inventory Management',
-        description: 'Weekly feed stock monitoring, ordering schedules, and cost tracking',
-        frequency: 'Weekly',
-        createdOn: '2024-01-08',
-        updatedOn: '2024-01-22',
-    },
-    {
-        id: 6,
-        name: 'Vaccination Schedule',
-        description: 'Monthly vaccination records, medication logs, and health protocols',
-        frequency: 'Monthly',
-        createdOn: '2024-01-03',
-        updatedOn: '2024-01-17',
-    },
-];
+// Get forms from the database via Inertia props
+interface PageProps {
+    forms: Array<{
+        id: number;
+        name: string;
+        description: string;
+        frequency: string;
+        created_at: string;
+        updated_at: string;
+    }>;
+}
 
 const getFrequencyBadgeVariant = (frequency: string) => {
     switch (frequency) {
@@ -88,6 +49,8 @@ const formatDate = (dateString: string) => {
 };
 
 export default function Forms() {
+    const { forms } = usePage<PageProps>().props;
+    
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Forms" />
@@ -100,9 +63,11 @@ export default function Forms() {
                             Manage your daily, weekly, and monthly farm maintenance forms
                         </p>
                     </div>
-                    <Button className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Create New Form
+                    <Button className="gap-2" asChild>
+                        <Link href="/forms/create">
+                            <Plus className="h-4 w-4" />
+                            Create New Form
+                        </Link>
                     </Button>
                 </div>
 
@@ -125,7 +90,7 @@ export default function Forms() {
                                     </tr>
                                 </thead>
                                 <tbody className="text-sm">
-                                    {mockForms.map((form) => (
+                                    {forms.map((form) => (
                                         <tr key={form.id} className="border-b transition-colors hover:bg-muted/50">
                                             <td className="py-4 pl-4 pr-3 font-medium">
                                                 {form.name}
@@ -141,13 +106,13 @@ export default function Forms() {
                                             <td className="py-4 px-3 text-muted-foreground">
                                                 <div className="flex items-center gap-1">
                                                     <Calendar className="h-3 w-3" />
-                                                    {formatDate(form.createdOn)}
+                                                    {formatDate(form.created_at)}
                                                 </div>
                                             </td>
                                             <td className="py-4 px-3 text-muted-foreground">
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="h-3 w-3" />
-                                                    {formatDate(form.updatedOn)}
+                                                    {formatDate(form.updated_at)}
                                                 </div>
                                             </td>
                                             <td className="py-4 pl-3 pr-4">
@@ -157,8 +122,11 @@ export default function Forms() {
                                                         size="sm"
                                                         className="h-8 w-8 p-0"
                                                         title="Edit form"
+                                                        asChild
                                                     >
-                                                        <Edit className="h-4 w-4" />
+                                                        <Link href={`/forms/${form.id}/edit`}>
+                                                            <Edit className="h-4 w-4" />
+                                                        </Link>
                                                     </Button>
                                                     <Button
                                                         variant="ghost"

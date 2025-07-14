@@ -10,7 +10,7 @@ class FormController extends Controller
 {
     public function index()
     {
-        $forms = Form::all();
+        $forms = Form::get();
         return Inertia::render('forms/index', ['forms' => $forms]);
     }
 
@@ -43,9 +43,9 @@ class FormController extends Controller
     {
         try {
             $form->delete();
-            return redirect()->route('forms')->with('success', 'Form deleted successfully.');
+            return Inertia::location(route('forms'));
         } catch (\Exception $e) {
-            return redirect()->route('forms')->with('error', 'Failed to delete form.');
+            return back()->with('error', 'Failed to delete form.');
         }
     }
 }   
